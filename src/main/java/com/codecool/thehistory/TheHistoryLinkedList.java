@@ -1,9 +1,6 @@
 package com.codecool.thehistory;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 public class TheHistoryLinkedList implements TheHistory {
     /**
@@ -42,8 +39,56 @@ public class TheHistoryLinkedList implements TheHistory {
 
     @Override
     public void replaceMoreWords(String[] fromWords, String[] toWords) {
-        //TODO: check the TheHistory interface for more information
+        ListIterator<String> it=wordsLinkedList.listIterator();
+        int[] indexes = getIndexesOfSentence(fromWords);
+        LinkedList<String> newList = new LinkedList<>();
+
+        for (int index: indexes) {
+            while (it.nextIndex()<index)
+                newList.add(it.next());
+
+            for (int j=0;j<toWords.length;j++)
+                newList.add(toWords[j]);
+            while (it.nextIndex()<index+fromWords.length)
+                it.next();
+
+        }
+
+        while (it.hasNext())
+            newList.add(it.next());
+
+        wordsLinkedList = newList;
     }
+
+    public int[] getIndexesOfSentence(String[] sentence) {
+        ArrayList<Integer> indexes = new ArrayList<>();
+        int i = 0;
+        ListIterator<String> it = wordsLinkedList.listIterator();
+        while (i<wordsLinkedList.size()-(sentence.length-1)) {
+            if (it.next().equals(sentence[0])) {
+                int j = 1;
+                while (j<sentence.length && it.next().equals(sentence[j]))
+                    j++;
+                if (j==sentence.length) {
+                    indexes.add(i);
+                    i += j;
+                } else {
+                    while (it.previousIndex() != i)
+                        it.previous();
+                    i++;
+                }
+            } else
+                i++;
+
+        }
+
+        int[] res = new int[indexes.size()];
+        for (i=0;i<res.length;i++)
+            res[i] = indexes.get(i);
+
+        return res;
+    }
+
 
     @Override
     public String toString() {

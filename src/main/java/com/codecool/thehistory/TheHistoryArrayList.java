@@ -42,8 +42,49 @@ public class TheHistoryArrayList implements TheHistory {
 
     @Override
     public void replaceMoreWords(String[] fromWords, String[] toWords) {
-        //TODO: check the TheHistory interface for more information
+        int[] indexes = getIndexesOfSentence(fromWords);
+        ArrayList<String> newArray = new ArrayList<>();
+        int i=0;
+        for (int index : indexes) {
+            while ( i<index)
+                newArray.add(wordsArrayList.get(i++));
+            for (int j=0;j<toWords.length;j++)
+                newArray.add(toWords[j]);
+            i+=fromWords.length;
+
+        }
+
+        while (i<wordsArrayList.size())
+            newArray.add(wordsArrayList.get(i++));
+
+        wordsArrayList = newArray;
     }
+
+
+    public int[] getIndexesOfSentence(String[] sentence) {
+        ArrayList<Integer> indexes = new ArrayList<>();
+        int i = 0;
+        while (i<wordsArrayList.size()-(sentence.length-1)) {
+            if (wordsArrayList.get(i).equals(sentence[0])) {
+                int j = 0;
+                while (j<sentence.length && wordsArrayList.get(i+j).equals(sentence[j]))
+                    j++;
+                if (j==sentence.length) {
+                    indexes.add(i);
+                    i += j;
+                } else
+                    i++;
+            } else i++;
+
+        }
+
+        int[] res = new int[indexes.size()];
+        for (i=0;i<res.length;i++)
+            res[i] = indexes.get(i);
+
+        return res;
+    }
+
 
     @Override
     public String toString() {
